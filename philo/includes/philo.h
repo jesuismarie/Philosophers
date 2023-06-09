@@ -6,7 +6,7 @@
 /*   By: mnazarya <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/31 10:24:38 by mnazarya          #+#    #+#             */
-/*   Updated: 2023/06/09 13:58:07 by mnazarya         ###   ########.fr       */
+/*   Updated: 2023/06/09 15:41:41 by mnazarya         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,14 +39,14 @@ typedef struct s_philo
 
 typedef struct s_main
 {
-	unsigned long	time_to_die;
-	int				philo_count;
-	int				eat_count;
-	int				is_died;
-	t_philo			*philos;
-	pthread_mutex_t	*forks;
-	pthread_mutex_t	mutex_die;
-	pthread_mutex_t	mutex_write;
+	unsigned long long	time_to_die;
+	int					philo_count;
+	int					eat_count;
+	int					is_died;
+	t_philo				*philos;
+	pthread_mutex_t		*forks;
+	pthread_mutex_t		mutex_die;
+	pthread_mutex_t		mutex_write;
 }	t_main;
 
 int					ft_atoi(const char *nptr);
