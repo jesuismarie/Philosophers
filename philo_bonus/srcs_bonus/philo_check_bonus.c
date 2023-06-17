@@ -5,16 +5,38 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: mnazarya <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/06/15 16:47:19 by mnazarya          #+#    #+#             */
-/*   Updated: 2023/06/15 20:47:12 by mnazarya         ###   ########.fr       */
+/*   Created: 2023/06/17 13:56:18 by mnazarya          #+#    #+#             */
+/*   Updated: 2023/06/17 16:23:03 by mnazarya         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <philo_bonus.h>
 
-void	line_print(t_philo *philo, char *s, unsigned long long t)
+void	*call_threads(void *info)
 {
-	sem_wait(philo->sem_print);
-	printf("[%llu ms] %d %s\n", t, philo->philo_id, s);
-	sem_post(philo->sem_print);
+	t_data	*data;
+
+	data = (t_data *)info;
+	while (1)
+	{
+		sem_wait(data->philo_data->sem_last_eat);
+		if ((my_gettime() - data->philo_data->last_eat)
+			> data->table->time_to_die)
+		{
+			line_print(data->philo_data, "died", my_gettime());
+			sem_wait(data->philo_data->sem_print);
+			sem_post(data->philo_data->sem_last_eat);
+			exit(1);
+		}
+		sem_post(data->philo_data->sem_last_eat);
+		sem_wait(data->philo_data->sem_eat_count);
+		if (data->table->eat_count != -1
+			&& data->philo_data->eat_count >= data->table->eat_count)
+		{
+			sem_post(data->philo_data->sem_eat_count);
+			exit (0);
+		}
+		sem_post(data->philo_data->sem_eat_count);
+	}
+	return (0);
 }

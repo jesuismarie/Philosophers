@@ -6,7 +6,7 @@
 /*   By: mnazarya <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/05 16:33:38 by mnazarya          #+#    #+#             */
-/*   Updated: 2023/06/15 20:52:24 by mnazarya         ###   ########.fr       */
+/*   Updated: 2023/06/17 12:45:38 by mnazarya         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,6 @@
 void	semaphore_init(t_philo *philo)
 {
 	sem_unlink(SEM_FORKS);
-	sem_unlink(SEM_DIE);
 	sem_unlink(SEM_PRINT);
 	sem_unlink(SEM_EAT_COUNT);
 	sem_unlink(SEM_LAST_EAT);

@@ -6,7 +6,7 @@
 /*   By: mnazarya <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/05 15:53:03 by mnazarya          #+#    #+#             */
-/*   Updated: 2023/06/15 20:47:27 by mnazarya         ###   ########.fr       */
+/*   Updated: 2023/06/17 15:53:57 by mnazarya         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,9 +66,10 @@ void				semaphore_init(t_philo *philo);
 void				philo_init(t_philo *philo, char **argv);
 int					args_init(t_main *table, char **argv);
 unsigned long long	my_gettime(void);
-void				my_usleep(t_philo *philo, unsigned long long t);
+void				my_usleep(unsigned long long t);
 void				line_print(t_philo *philo, char *s, unsigned long long t);
 void				create_philo(t_main *table);
-void				unlink_close(t_philo *philo);
+void				*call_threads(void *info);
+void				kill_philos(t_main *table);
 
 #endif

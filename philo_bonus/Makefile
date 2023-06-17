@@ -12,7 +12,7 @@ INCS = -I./includes_bonus
 
 HEADER = ./includes_bonus/philo_bonus.h
 
-FLAGS = -Wall -Wextra -Werror # -g -fsanitize=thread
+FLAGS = -Wall -Wextra -Werror  #-g -fsanitize=address
 
 CC = cc
 
