@@ -21,6 +21,8 @@
 
 typedef struct s_philo
 {
+	unsigned long long	*start_time;
+	unsigned long long	time_to_die;
 	int					time_to_sleep;
 	int					philo_count;
 	int					time_to_eat;
@@ -39,13 +41,18 @@ typedef struct s_philo
 
 typedef struct s_main
 {
+	unsigned long long	start_time;
 	unsigned long long	time_to_die;
 	int					philo_count;
 	int					eat_count;
 	int					is_died;
+	int					is_full;
 	t_philo				*philos;
 	pthread_mutex_t		*forks;
+	pthread_t			die_checker;
+	pthread_t			eat_checker;
 	pthread_mutex_t		mutex_die;
+	pthread_mutex_t		mutex_full;
 	pthread_mutex_t		mutex_write;
 }	t_main;
 
@@ -56,11 +63,13 @@ void				philo_init(t_main *table, char **argv);
 int					args_init(t_main *table, int argc, char **argv);
 unsigned long long	my_gettime(void);
 void				my_usleep(t_philo *philo, unsigned long long t);
+void				create_threads(t_main *table);
+void				join_threads(t_main *table);
 int					is_died(t_philo *philo);
 void				*routine(void *info);
 void				check_print(t_philo *philo, char *s, unsigned long long t);
-int					check_die(t_main *table);
-int					check_eat_count(t_main *table);
+void				*check_die(void *data);
+void				*check_eat_count(void *data);
 void				destroy_philo(t_main *table);
 
 #endif

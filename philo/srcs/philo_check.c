@@ -22,61 +22,75 @@ int	is_died(t_philo *philo)
 	return (n);
 }
 
-int	check_die(t_main *table)
+void	*check_die(void *data)
 {
-	int	i;
+	int		i;
+	t_main	*table;
 
-	i = -1;
-	while (++i < table->philo_count)
+	table = (t_main *)data;
+	while (1)
 	{
-		pthread_mutex_lock(&(table->philos[i].last_eat_mutex));
-		if ((my_gettime() - table->philos[i].last_eat) > table->time_to_die)
+		i = -1;
+		usleep(500);
+		while (++i < table->philo_count)
 		{
+			pthread_mutex_lock(&(table->philos[i].last_eat_mutex));
+			if ((my_gettime() - table->philos[i].last_eat) > table->time_to_die)
+			{
+				pthread_mutex_unlock(&(table->philos[i].last_eat_mutex));
+				pthread_mutex_lock(&(table->mutex_die));
+				table->is_died = 1;
+				pthread_mutex_unlock(&(table->mutex_die));
+				pthread_mutex_lock(&(table->mutex_write));
+				printf("[%llu ms] %d %s\n", my_gettime() - table->start_time, (i + 1), "died");
+				pthread_mutex_unlock(&(table->mutex_write));
+				return (NULL);
+			}
+			pthread_mutex_unlock(&(table->philos[i].last_eat_mutex));
+		}
+	}
+	return (NULL);
+}
+
+void	*check_eat_count(void *data)
+{
+	t_main	*table;
+	int		i;
+	int		count;
+
+	table = (t_main *)data;
+	while (1)
+	{
+		i = -1;
+		count = 0;
+		while (table->eat_count != -1 && ++i < table->philo_count)
+		{
+			pthread_mutex_lock(&(table->philos[i].eat_count_mutex));
+			if (table->philos[i].eat_count >= table->eat_count)
+				count++;
+			pthread_mutex_unlock(&(table->philos[i].eat_count_mutex));
+		}
+		if (count == table->philo_count)
+		{
+			pthread_mutex_lock(&(table->mutex_full));
+			table->is_full = 1;
+			pthread_mutex_unlock(&(table->mutex_full));
 			pthread_mutex_lock(&(table->mutex_die));
 			table->is_died = 1;
 			pthread_mutex_unlock(&(table->mutex_die));
 			pthread_mutex_lock(&(table->mutex_write));
-			printf("[%llu ms] %d %s\n", my_gettime(), (i + 1), "died");
+			printf("All philosophers have eaten %d times\n", table->eat_count);
 			pthread_mutex_unlock(&(table->mutex_write));
-			pthread_mutex_unlock(&(table->philos[i].last_eat_mutex));
-			return (1);
+			return (NULL);
 		}
-		pthread_mutex_unlock(&(table->philos[i].last_eat_mutex));
 	}
-	return (0);
-}
-
-int	check_eat_count(t_main *table)
-{
-	int	i;
-
-	i = 0;
-	while (table->eat_count != -1 && i < table->philo_count)
-	{
-		pthread_mutex_lock(&(table->philos[i].eat_count_mutex));
-		if (table->philos[i].eat_count >= table->eat_count)
-		{
-			pthread_mutex_unlock(&(table->philos[i].eat_count_mutex));
-			i++;
-		}
-		else
-			break ;
-	}
-	pthread_mutex_unlock(&(table->philos[i].eat_count_mutex));
-	if (i == table->philo_count)
-	{
-		pthread_mutex_lock(&(table->mutex_die));
-		table->is_died = 1;
-		pthread_mutex_unlock(&(table->mutex_die));
-		return (1);
-	}
-	return (0);
+	return (NULL);
 }
 
 void	check_print(t_philo *philo, char *s, unsigned long long t)
 {
 	pthread_mutex_lock(philo->mutex_write);
 	if (!is_died(philo))
-		printf("[%llu ms] %d %s\n", t, philo->philo_id, s);
+		printf("[%llu ms] %d %s\n", t - *(philo->start_time), philo->philo_id, s);
 	pthread_mutex_unlock(philo->mutex_write);
 }

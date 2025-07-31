@@ -14,10 +14,19 @@
 
 static void	pick_forks(t_philo *philo)
 {
-	if (philo->philo_id == philo->philo_count)
+	if (philo->philo_id % 2 == 1)
 	{
 		pthread_mutex_lock(philo->right);
 		check_print(philo, "has taken a right fork", my_gettime());
+		if (philo->philo_count == 1)
+		{
+			pthread_mutex_unlock(philo->right);
+			my_usleep(philo, philo->time_to_die);
+			pthread_mutex_lock(philo->mutex_die);
+			*(philo->is_died) = 1;
+			pthread_mutex_unlock(philo->mutex_die);
+			return ;
+		}
 		pthread_mutex_lock(philo->left);
 		check_print(philo, "has taken a left fork", my_gettime());
 	}
@@ -35,6 +44,8 @@ static void	day_activity(t_philo *philo)
 	while (!is_died(philo))
 	{
 		pick_forks(philo);
+		if (philo->philo_count == 1 && is_died(philo))
+			return ;
 		check_print(philo, "is eating", my_gettime());
 		pthread_mutex_lock(&(philo->last_eat_mutex));
 		philo->last_eat = my_gettime();
@@ -57,10 +68,8 @@ void	*routine(void *info)
 
 	philo = (t_philo *)info;
 	pthread_mutex_lock(&(philo->last_eat_mutex));
-	philo->last_eat = my_gettime();
+	philo->last_eat = *(philo->start_time);
 	pthread_mutex_unlock(&(philo->last_eat_mutex));
-	if (philo->philo_id % 2 == 0)
-		usleep(1000);
 	day_activity(philo);
 	return (0);
 }

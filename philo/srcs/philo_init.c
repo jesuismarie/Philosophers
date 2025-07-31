@@ -50,15 +50,17 @@ void	philo_init(t_main *table, char **argv)
 	pthread_mutex_init(&(table->mutex_write), NULL);
 	while (++i < table->philo_count)
 	{
+		table->philos[i].time_to_die = table->time_to_die;
 		table->philos[i].time_to_sleep = ft_atoi(argv[4]);
 		table->philos[i].time_to_eat = ft_atoi(argv[3]);
 		table->philos[i].is_died = &(table->is_died);
 		table->philos[i].philo_id = i + 1;
 		table->philos[i].eat_count = 0;
-		table->philos[i].last_eat = 0;
+		table->philos[i].last_eat = table->start_time;
 		table->philos[i].philo_count = table->philo_count;
 		table->philos[i].mutex_die = &(table->mutex_die);
 		table->philos[i].mutex_write = &(table->mutex_write);
+		table->philos[i].start_time = &(table->start_time);
 		pthread_mutex_init(&(table->philos[i].last_eat_mutex), NULL);
 		pthread_mutex_init(&(table->philos[i].eat_count_mutex), NULL);
 	}
@@ -72,7 +74,8 @@ int	args_init(t_main *table, int argc, char **argv)
 		return (1);
 	}
 	table->philo_count = ft_atoi(argv[1]);
-	if (table->philo_count == 0)
+	if (table->philo_count <= 0 || ft_atoi(argv[4]) <= 0
+		|| ft_atoi(argv[3]) <= 0)
 		return (1);
 	table->philos = (t_philo *)malloc(sizeof(t_philo) * table->philo_count);
 	if (!table->philos)
@@ -89,18 +92,10 @@ int	args_init(t_main *table, int argc, char **argv)
 
 unsigned long long	my_gettime(void)
 {
-	static unsigned long long	start;
-	struct timeval				time;
-	static int					count;
+	struct timeval	time;
 
-	if (count == 0)
-	{
-		gettimeofday(&time, NULL);
-		start = (time.tv_sec * 1000) + (time.tv_usec / 1000);
-		count++;
-	}
 	gettimeofday(&time, NULL);
-	return ((time.tv_sec * 1000) + (time.tv_usec / 1000) - start);
+	return ((time.tv_sec * 1000) + (time.tv_usec / 1000));
 }
 
 void	my_usleep(t_philo *philo, unsigned long long t)
