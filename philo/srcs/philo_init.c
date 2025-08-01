@@ -6,7 +6,7 @@
 /*   By: mnazarya <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/31 14:24:49 by mnazarya          #+#    #+#             */
-/*   Updated: 2023/06/09 13:57:37 by mnazarya         ###   ########.fr       */
+/*   Updated: 2025/08/01 01:04:11 by mnazarya         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,7 @@ void	philo_init(t_main *table, char **argv)
 	table->is_died = 0;
 	pthread_mutex_init(&(table->mutex_die), NULL);
 	pthread_mutex_init(&(table->mutex_write), NULL);
+	pthread_mutex_init(&(table->mutex_full), NULL);
 	while (++i < table->philo_count)
 	{
 		table->philos[i].time_to_die = table->time_to_die;
@@ -88,25 +89,4 @@ int	args_init(t_main *table, int argc, char **argv)
 	if (argv[5])
 		table->eat_count = ft_atoi(argv[5]);
 	return (0);
-}
-
-unsigned long long	my_gettime(void)
-{
-	struct timeval	time;
-
-	gettimeofday(&time, NULL);
-	return ((time.tv_sec * 1000) + (time.tv_usec / 1000));
-}
-
-void	my_usleep(t_philo *philo, unsigned long long t)
-{
-	unsigned long	time;
-
-	time = my_gettime();
-	while (!is_died(philo))
-	{
-		if (my_gettime() - time >= t)
-			break ;
-		usleep(50);
-	}
 }

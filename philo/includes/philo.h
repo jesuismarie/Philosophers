@@ -6,7 +6,7 @@
 /*   By: mnazarya <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/31 10:24:38 by mnazarya          #+#    #+#             */
-/*   Updated: 2023/06/09 15:41:41 by mnazarya         ###   ########.fr       */
+/*   Updated: 2025/08/01 11:52:37 by mnazarya         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,8 +63,6 @@ void				philo_init(t_main *table, char **argv);
 int					args_init(t_main *table, int argc, char **argv);
 unsigned long long	my_gettime(void);
 void				my_usleep(t_philo *philo, unsigned long long t);
-void				create_threads(t_main *table);
-void				join_threads(t_main *table);
 int					is_died(t_philo *philo);
 void				*routine(void *info);
 void				check_print(t_philo *philo, char *s, unsigned long long t);

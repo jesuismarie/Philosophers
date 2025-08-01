@@ -19,10 +19,6 @@ int	main(int argc, char **argv)
 
 	if (args_init(&table, argc, argv))
 		return (1);
-	pthread_create(&table.die_checker, NULL, &check_die, (void *)&table);
-	if (table.eat_count != -1)
-		pthread_create(&table.eat_checker, NULL, &check_eat_count,
-			(void *)&table);
 	table.start_time = my_gettime();
 	i = -1;
 	while (++i < table.philo_count)
@@ -30,6 +26,10 @@ int	main(int argc, char **argv)
 		pthread_create(&(table.philos[i].philo), NULL, &routine,
 			(void *)&(table.philos[i]));
 	}
+	pthread_create(&table.die_checker, NULL, &check_die, (void *)&table);
+	if (table.eat_count != -1)
+		pthread_create(&table.eat_checker, NULL, &check_eat_count,
+			(void *)&table);
 	i = -1;
 	while (++i < table.philo_count)
 		pthread_join(table.philos[i].philo, NULL);

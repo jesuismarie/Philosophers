@@ -12,7 +12,7 @@ INCS = -I./includes
 
 HEADER = ./includes/philo.h
 
-FLAGS = -Wall -Wextra -Werror #-g -fsanitize=thread
+FLAGS = -Wall -Wextra -Werror -g -fsanitize=thread
 
 CC = cc
 
